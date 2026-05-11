@@ -56,6 +56,26 @@ header h1 img{height:40px;width:auto;object-fit:contain;flex-shrink:0}
   padding:4px 0;
 }
 
+.report-head{
+  display:flex;align-items:center;gap:18px;
+  width:100%;margin-bottom:14px;padding:14px 18px;
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.report-head img{
+  width:132px;height:48px;object-fit:contain;flex-shrink:0;
+}
+.report-title{
+  flex:1;min-height:42px;display:flex;align-items:center;
+  font-family:var(--fh);font-size:1.35rem;font-weight:800;color:var(--navy);
+  outline:none;border-left:1px solid var(--border);padding-left:18px;
+  line-height:1.2;word-break:break-word;
+}
+.report-title:empty::before{
+  content:'Escribir título';
+  color:#8aa1ad;font-weight:600;
+}
+
 /* ── GRID ── */
 .row{display:grid;gap:14px;margin-bottom:14px;width:100%}
 .g2{grid-template-columns:1fr 1fr}
@@ -326,6 +346,11 @@ tbody tr:hover td{background:#f7fbfc}
   <div class="dash-wrap" id="dashWrap">
     <div id="capture">
 
+      <div class="report-head">
+        <img src="LOGO ENTEL2.jpeg" alt="Logo Entel"/>
+        <div id="report-title" class="report-title" contenteditable="true" onblur="saveReportTitle()"></div>
+      </div>
+
       <div class="row g2">
         <!-- EPA -->
         <div class="card" id="card-epa">
@@ -528,6 +553,7 @@ const D = {
   comments:{
     op:'', mej:''
   },
+  reportTitle:'Informe Semanal CDS',
   // Estilos de texto independientes para cada bloque
   styles:{
     act:[
@@ -603,6 +629,9 @@ function ensureDataShape(){
   D.blockStyles.plazos = D.blockStyles.plazos || {color:'#17303c', size:'0.72rem', bold:false};
   D.blockStyles.contact = D.blockStyles.contact || {color:'#1a7a8c', size:'0.72rem', bold:false};
   D.comments = D.comments || {op:'', mej:''};
+  if(typeof D.reportTitle !== 'string'){
+    D.reportTitle = 'Informe Semanal CDS';
+  }
 }
 
 function applyLoadedData(data){
@@ -659,7 +688,11 @@ function bStyle(key, numVal){
 }
 
 /* ═══════════════ RENDER ═══════════════ */
-function render(){ rEPA(); rPlazos(); rContact(); rAct(); rInd(); rComments(); }
+function render(){ rReportHead(); rEPA(); rPlazos(); rContact(); rAct(); rInd(); rComments(); }
+
+function rReportHead(){
+  document.getElementById('report-title').textContent = D.reportTitle || '';
+}
 
 function rEPA(){
   const st = D.blockStyles.epa;
@@ -1007,6 +1040,14 @@ function saveColors(){
 function saveComentarios(){
   persistData();
   toast();
+}
+
+function saveReportTitle(){
+  const el = document.getElementById('report-title');
+  D.reportTitle = (el.textContent || '').trim();
+  persistData();
+  rReportHead();
+  toast('Titulo guardado');
 }
 
 /* ═══════════════ DOWNLOAD ═══════════════ */
